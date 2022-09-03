@@ -8,9 +8,10 @@ public class Controller : MonoBehaviour
     private Camera mainCamera;
 
     [SerializeField]
-    private Line linePrefab;
+    private GameObject attackCutter;
+
     [SerializeField]
-    private Line currentLine;
+    private LineRenderer attackLineRenderer;
 
     public Tower senderTower;
     public Tower receiverTower;
@@ -32,16 +33,16 @@ public class Controller : MonoBehaviour
                 {
                     if (raycastHit.collider.gameObject.GetComponent<Tower>().isAllied)
                     {
+                        attackLineRenderer.gameObject.SetActive(true);
                         senderTower = raycastHit.collider.gameObject.GetComponent<Tower>();
-                        currentLine = Instantiate(linePrefab, senderTower.transform);
-                        currentLine.transform.position = Vector3.zero;
-                        currentLine.SetSenderTower(senderTower);
-                        senderTower.AddReceiverLine(currentLine);
+                        attackLineRenderer.SetPosition(0, senderTower.transform.position);
                     }
                 }
                 else
                 {
-                    Debug.Log("Kuleye týklamadýk");
+                    attackCutter.transform.position = raycastHit.point;
+                    attackCutter.SetActive(true);
+                    // Debug.Log("Kuleye týklamadýk");
                 }
             }
         }
@@ -50,9 +51,13 @@ public class Controller : MonoBehaviour
         {
             if (Physics.Raycast(ray, out RaycastHit raycastHit, 100))
             {
-                if (currentLine)
+                if (senderTower)
                 {
-                    currentLine.SetMovePosition(raycastHit.point);
+                    attackLineRenderer.SetPosition(1, raycastHit.point);
+                }
+                else
+                {
+                    attackCutter.transform.position = raycastHit.point;
                 }
             }
         }
@@ -66,25 +71,20 @@ public class Controller : MonoBehaviour
                     if (raycastHit.collider.CompareTag("Tower"))
                     {
                         receiverTower = raycastHit.collider.gameObject.GetComponent<Tower>();
-                        currentLine.SetReceiverTower(receiverTower);
                         senderTower.AddReceiverTower(receiverTower);
                         receiverTower.AddSenderTower(senderTower);
-                        receiverTower.AddSenderLine(currentLine);
-                        senderTower = null;
-                        receiverTower = null;
-                        currentLine = null;
-                    }
-                    else
-                    {
-                        Destroy(currentLine);
-                        currentLine = null;
+                        attackLineRenderer.SetPosition(1, receiverTower.transform.position);
                     }
                 }
                 else
                 {
-                    Debug.Log("Fareyi býraktýk ama senderServer yok");
+                    attackCutter.SetActive(false);
+                    // Debug.Log("Fareyi býraktýk ama senderServer yok");
                 }
             }
+            senderTower = null;
+            receiverTower = null;
+            attackLineRenderer.gameObject.SetActive(false);
         }
     }
 }

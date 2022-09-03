@@ -10,6 +10,14 @@ public class Line : MonoBehaviour
     private Tower receiverTower;
 
     private LineRenderer lineRenderer;
+
+    #region AttackCollider
+    [SerializeField]
+    private AttackCollider attackColliderPrefab;
+    [SerializeField]
+    private AttackCollider currentAttackCollider;
+    #endregion
+
     private void Awake()
     {
         lineRenderer = GetComponent<LineRenderer>();
@@ -29,6 +37,7 @@ public class Line : MonoBehaviour
     {
         receiverTower = receiver;
         lineRenderer.SetPosition(1, receiverTower.transform.position);
+        CreateAttackCollider();
     }
 
     public Tower GetSenderTower()
@@ -39,5 +48,28 @@ public class Line : MonoBehaviour
     public Tower GetReceiverTower()
     {
         return receiverTower;
+    }
+
+    // Attack Collider
+    public void CreateAttackCollider()
+    {
+        Vector3 position0 = lineRenderer.GetPosition(0);
+        Vector3 position1 = lineRenderer.GetPosition(1);
+
+        currentAttackCollider = Instantiate(attackColliderPrefab,
+           position0, Quaternion.identity);
+
+        currentAttackCollider.SetTransform(position0, position1, this);
+    }
+
+    public void CutAttack()
+    {
+        senderTower.RemoveReceiverTower(receiverTower);
+
+        receiverTower.RemoveSenderTower(senderTower);
+
+        senderTower.RemoveReceiverLine(this);
+
+        receiverTower.RemoveSenderLine(this);
     }
 }

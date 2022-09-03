@@ -5,6 +5,13 @@ using TMPro;
 
 public class Tower : MonoBehaviour
 {
+    #region Line
+    // Line
+    [SerializeField]
+    private Line linePrefab;
+    [SerializeField]
+    private Line currentLine;
+    #endregion
     #region Health And Type
     //Kulenin caný ve cinsi ile ilgili
     public bool isAllied;
@@ -24,10 +31,14 @@ public class Tower : MonoBehaviour
     [SerializeField]
     private MeshRenderer meshRenderer;
 
+    // Deðiþim Particle'larý
+
     // Arayüz
     [SerializeField]
     private TextMeshProUGUI healthText;
     #endregion
+
+
     #region Towers And Soldiers
     // Kulelerin birbirine baðlanmasý ve asker gönderme ile ilgili
     // Bu kuleye asker gönderen kuleler
@@ -112,15 +123,29 @@ public class Tower : MonoBehaviour
     {
         if (!receiverTowers.Contains(_tower))
         {
-            receiverTowers.Add(_tower);
+            CreateLine(_tower);
+
             if (senderTowers.Contains(_tower))
             {
                 RemoveSenderTower(_tower);
             }
         }
 
+
         StopAllCoroutines();
         StartCoroutine(SendSoldierRoutine());
+    }
+
+    public void CreateLine(Tower _tower)
+    {
+        // Line
+        currentLine = Instantiate(linePrefab, transform);
+        currentLine.transform.position = Vector3.zero;
+        currentLine.SetSenderTower(this);
+        AddReceiverLine(currentLine);
+        currentLine.SetReceiverTower(_tower);
+        _tower.AddSenderLine(currentLine);
+        receiverTowers.Add(_tower);
     }
 
     public void RemoveReceiverTower(Tower _tower)
@@ -184,7 +209,7 @@ public class Tower : MonoBehaviour
     }
     #endregion
 
-    //Kulenin caný ve cinsi ile ilgili
+    // Kulenin caný ve cinsi ile ilgili
     public void IncreaseHealth()
     {
         health++;
