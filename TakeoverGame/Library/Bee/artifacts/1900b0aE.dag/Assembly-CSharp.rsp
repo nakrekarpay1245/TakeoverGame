@@ -358,6 +358,7 @@
 "Assets/Scripts/Manager.cs"
 "Assets/Scripts/Soldier.cs"
 "Assets/Scripts/Tower.cs"
+"Assets/Scripts/TowerManager.cs"
 -langversion:9.0
 
 /deterministic

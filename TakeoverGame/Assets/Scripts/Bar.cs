@@ -15,7 +15,7 @@ public class Bar : MonoBehaviour
 
     public void SetMaxValue(float value)
     {
-        Debug.Log("Set Max Value : " + value);
+        // Debug.Log("Set Max Value : " + value);
 
         maxValue = value;
 
@@ -25,7 +25,7 @@ public class Bar : MonoBehaviour
 
     public void SetCurrentValue(float value)
     {
-        Debug.Log("Set Current Value : " + value);
+        // Debug.Log("Set Current Value : " + value);
 
         currentValue = value;
 

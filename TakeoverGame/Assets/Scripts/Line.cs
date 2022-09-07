@@ -4,72 +4,88 @@ using UnityEngine;
 
 public class Line : MonoBehaviour
 {
-    [SerializeField]
-    private Tower senderTower;
-    [SerializeField]
-    private Tower receiverTower;
+    //[SerializeField]
+    //private Tower senderTower;
+    //[SerializeField]
+    //private Tower receiverTower;
 
-    private LineRenderer lineRenderer;
+    //private LineRenderer lineRenderer;
 
-    #region AttackCollider
-    [SerializeField]
-    private AttackCollider attackColliderPrefab;
-    [SerializeField]
-    private AttackCollider currentAttackCollider;
-    #endregion
+    //#region AttackCollider
+    //[SerializeField]
+    //private AttackCollider attackColliderPrefab;
+    //[SerializeField]
+    //private AttackCollider currentAttackCollider;
+    //#endregion
 
-    private void Awake()
-    {
-        lineRenderer = GetComponent<LineRenderer>();
-    }
+    //private void Awake()
+    //{
+    //    lineRenderer = GetComponent<LineRenderer>();
+    //}
 
-    public void SetSenderTower(Tower sender)
-    {
-        senderTower = sender;
-        lineRenderer.SetPosition(0, senderTower.transform.position);
-    }
+    //public void SetSenderTower(Tower sender)
+    //{
+    //    senderTower = sender;
+    //    Vector3 position0 = new Vector3(senderTower.transform.position.x, 0.5f, senderTower.transform.position.z);
+    //    lineRenderer.SetPosition(0, position0);
 
-    public void SetMovePosition(Vector3 position)
-    {
-        lineRenderer.SetPosition(1, position);
-    }
-    public void SetReceiverTower(Tower receiver)
-    {
-        receiverTower = receiver;
-        lineRenderer.SetPosition(1, receiverTower.transform.position);
-        CreateAttackCollider();
-    }
+    //    if (senderTower.isAllied)
+    //    {
+    //        lineRenderer.startColor = Color.green;
+    //        lineRenderer.endColor = Color.green;
+    //    }
+    //    else if (senderTower.isOpposite)
+    //    {
+    //        lineRenderer.startColor = Color.red;
+    //        lineRenderer.endColor = Color.red;
+    //    }
+    //}
 
-    public Tower GetSenderTower()
-    {
-        return senderTower;
-    }
+    //public void SetMovePosition(Vector3 position)
+    //{
+    //    lineRenderer.SetPosition(1, position);
+    //}
 
-    public Tower GetReceiverTower()
-    {
-        return receiverTower;
-    }
+    //public void SetReceiverTower(Tower receiver)
+    //{
+    //    receiverTower = receiver;
+    //    Vector3 position1 = new Vector3(receiverTower.transform.position.x, 0.5f, receiverTower.transform.position.z);
+    //    lineRenderer.SetPosition(1, position1);
+    //    CreateAttackCollider();
+    //}
 
-    // Attack Collider
-    public void CreateAttackCollider()
-    {
-        Vector3 position0 = lineRenderer.GetPosition(0);
-        Vector3 position1 = lineRenderer.GetPosition(1);
+    //public Tower GetSenderTower()
+    //{
+    //    return senderTower;
+    //}
 
-        currentAttackCollider = Instantiate(attackColliderPrefab,
-           position0, Quaternion.identity);
+    //public Tower GetReceiverTower()
+    //{
+    //    return receiverTower;
+    //}
 
-        currentAttackCollider.SetTransform(position0, position1, this);
-    }
+    //// Attack Collider
+    //public void CreateAttackCollider()
+    //{
+    //    Vector3 position0 = lineRenderer.GetPosition(0);
+    //    Vector3 position1 = lineRenderer.GetPosition(1);
 
-    public void CutAttack()
-    {
-        senderTower.RemoveReceiverTower(receiverTower);
+    //    if (senderTower.isAllied)
+    //    {
+    //        currentAttackCollider = Instantiate(attackColliderPrefab, transform);
 
-        receiverTower.RemoveSenderTower(senderTower);
+    //        currentAttackCollider.SetTransform(position0, position1, this);
+    //    }
+    //}
 
-        senderTower.RemoveReceiverLine(this);
+    //public void CutAttack()
+    //{
+    //    senderTower.RemoveReceiverTower(receiverTower);
 
-        receiverTower.RemoveSenderLine(this);
-    }
+    //    receiverTower.RemoveSenderTower(senderTower);
+
+    //    senderTower.RemoveReceiverLine(this);
+
+    //    receiverTower.RemoveSenderLine(this);
+    //}
 }

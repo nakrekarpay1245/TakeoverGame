@@ -5,21 +5,49 @@ using TMPro;
 
 public class Tower : MonoBehaviour
 {
-    #region Line
+    #region SFX and VFX
+    [SerializeField]
+    private GameObject alliedChangeParticle;
+    [SerializeField]
+    private GameObject oppositeChangeParticle;
+
+    [SerializeField]
+    private AudioSource audioSource;
+    [SerializeField]
+    private AudioClip sendSoldierClip;
+    [SerializeField]
+    private AudioClip alliedClip;
+    [SerializeField]
+    private AudioClip oppositeClip;
+
+    #endregion
+
+    #region Attack Collider
     // Line
     [SerializeField]
-    private Line linePrefab;
+    private AttackCollider attackColliderPrefab;
     [SerializeField]
-    private Line currentLine;
+    private AttackCollider currentAttackCollider;
+
+    // Bu kuleye asker gönderen kulelerden gelen AttackCollider'lar
+    [SerializeField]
+    private List<AttackCollider> senderAttackColliders;
+
+    // Bu kulenin asker göndereceði kulelere giden AttackCollider'lar
+    [SerializeField]
+    private List<AttackCollider> receiverAttackColliders;
+
     #endregion
+
     #region Health And Type
     //Kulenin caný ve cinsi ile ilgili
     public bool isAllied;
 
     public bool isOpposite;
 
+    public bool canChange;
+
     public float health = 0;
-    public float maxHealth = 5;
 
     // Material deðiþimi
     [SerializeField]
@@ -31,13 +59,10 @@ public class Tower : MonoBehaviour
     [SerializeField]
     private MeshRenderer meshRenderer;
 
-    // Deðiþim Particle'larý
-
     // Arayüz
     [SerializeField]
     private TextMeshProUGUI healthText;
     #endregion
-
 
     #region Towers And Soldiers
     // Kulelerin birbirine baðlanmasý ve asker gönderme ile ilgili
@@ -49,14 +74,6 @@ public class Tower : MonoBehaviour
     [SerializeField]
     private List<Tower> receiverTowers;
 
-    // Bu kuleye asker gönderen kulelerden gelen Line'lar
-    [SerializeField]
-    private List<Line> senderLines;
-
-    // Bu kulenin asker göndereceði kulelere giden Line'lan
-    [SerializeField]
-    private List<Line> receiverLines;
-
     [SerializeField]
     private Soldier currentSoldier;
     [SerializeField]
@@ -66,85 +83,178 @@ public class Tower : MonoBehaviour
 
     [SerializeField]
     private float sendSoldierTime;
+    private float _sendSoldierTime;
     #endregion
+
+    #region Opposite AI
+    [SerializeField]
+    private float oppositeAttackTime = 5;
+
+    #endregion
+
+    public bool isAttack = false;
     private void Awake()
     {
-        meshRenderer = GetComponent<MeshRenderer>();
+        audioSource = GetComponent<AudioSource>();
+        canChange = true;
     }
+
+    private void Start()
+    {
+        if (isAllied)
+        {
+            TowerManager.towerManager.AddAlliedTower(this);
+        }
+
+        else if (isOpposite)
+        {
+            TowerManager.towerManager.AddOppositeTower(this);
+            StartCoroutine(OppositeAttackRoutine());
+        }
+
+        else
+        {
+            TowerManager.towerManager.AddNeutralTower(this);
+        }
+    }
+
+    private void Update()
+    {
+        isAttack = receiverTowers.Count > 0;
+
+        if (!isAttack && (isOpposite || isAllied))
+        {
+            health += Time.deltaTime;
+        }
+
+        healthText.text = ((int)health).ToString();
+        _sendSoldierTime = sendSoldierTime - health / 100;
+        _sendSoldierTime = Mathf.Clamp(_sendSoldierTime, 0.15f, 5);
+        // Debug.Log(this.name + " Send Soldier Time : " + _sendSoldierTime);
+
+    }
+
+    #region Opposite Attack
+    public IEnumerator OppositeAttackRoutine()
+    {
+        yield return new WaitForSeconds(oppositeAttackTime);
+
+        while (isOpposite)
+        {
+            while (receiverTowers.Count < 2)
+            {
+                if (((int)Random.Range(0, 11)) > 5)
+                {
+                    Tower _receiverTower = TowerManager.towerManager.GetTower();
+                    if (_receiverTower != this)
+                    {
+                        AddReceiverTower(_receiverTower);
+                        _receiverTower.AddSenderTower(this);
+                        // Debug.Log("Attack Again: " + _receiverTower);
+                    }
+                }
+                //if (((int)Random.Range(0, 2)) > 0)
+                //{
+                //    RemoveReceiverTower(receiverTowers[Random.Range(0, receiverTowers.Count)]);
+                //    Debug.Log("Remove Receiver : ");
+                //}
+                //Debug.Log("Attack Routine");
+                yield return new WaitForSeconds(oppositeAttackTime);
+            }
+            yield return new WaitForSeconds(oppositeAttackTime);
+        }
+    }
+    #endregion
 
     #region Towers And Soldiers
     public IEnumerator SendSoldierRoutine()
     {
-        if (isAllied)
+        while (isAttack)
         {
-            while (receiverTowers.Count > 0)
+            while (receiverTowers.Count > 0 && isAllied)
             {
                 for (int i = 0; i < receiverTowers.Count; i++)
                 {
                     GenerateAlliedSoldier(receiverTowers[i].transform.position);
-                    yield return new WaitForSeconds(sendSoldierTime);
+                    yield return new WaitForSeconds(_sendSoldierTime);
                 }
-                yield return new WaitForSeconds(sendSoldierTime);
+                yield return new WaitForSeconds(_sendSoldierTime);
             }
-        }
-        else if (isOpposite)
-        {
-            while (receiverTowers.Count > 0)
+
+
+            while (receiverTowers.Count > 0 && isOpposite)
             {
                 for (int i = 0; i < receiverTowers.Count; i++)
                 {
                     GenerateOppositeSoldier(receiverTowers[i].transform.position);
-                    yield return new WaitForSeconds(sendSoldierTime);
+                    yield return new WaitForSeconds(_sendSoldierTime);
                 }
-                yield return new WaitForSeconds(sendSoldierTime);
+                yield return new WaitForSeconds(_sendSoldierTime);
             }
-        }
-        else
-        {
-            yield return new WaitForSeconds(sendSoldierTime);
+            yield return new WaitForSeconds(_sendSoldierTime);
         }
     }
 
     public void GenerateAlliedSoldier(Vector3 towerPosition)
     {
-        Soldier currentSoldier = Instantiate(alliedSoldierPrefab, transform.position, Quaternion.identity);
+        Soldier currentSoldier = Instantiate(alliedSoldierPrefab,
+            transform.position, Quaternion.identity);
+
         currentSoldier.senderTower = this;
         currentSoldier.MovePosition(towerPosition);
+        audioSource.PlayOneShot(sendSoldierClip);
     }
 
     public void GenerateOppositeSoldier(Vector3 towerPosition)
     {
-        Soldier currentSoldier = Instantiate(oppositeSoldierPrefab, transform.position, Quaternion.identity);
+        Soldier currentSoldier = Instantiate(oppositeSoldierPrefab,
+            transform.position, Quaternion.identity);
+
         currentSoldier.senderTower = this;
         currentSoldier.MovePosition(towerPosition);
+        audioSource.PlayOneShot(audioSource.clip);
     }
 
     public void AddReceiverTower(Tower _tower)
     {
         if (!receiverTowers.Contains(_tower))
         {
-            CreateLine(_tower);
+            CreateAttackCollider(_tower);
 
-            if (senderTowers.Contains(_tower))
+            if (isAllied && _tower.isAllied)
             {
-                RemoveSenderTower(_tower);
+                if (senderTowers.Contains(_tower))
+                {
+                    RemoveSenderTower(_tower);
+                }
+            }
+
+            else if (isOpposite && _tower.isOpposite)
+            {
+                if (senderTowers.Contains(_tower))
+                {
+                    RemoveSenderTower(_tower);
+                }
             }
         }
 
-
-        StopAllCoroutines();
-        StartCoroutine(SendSoldierRoutine());
+        if (!isAttack)
+        {
+            isAttack = true;
+            StopCoroutine(SendSoldierRoutine());
+            StartCoroutine(SendSoldierRoutine());
+        }
     }
 
-    public void CreateLine(Tower _tower)
+
+    public void CreateAttackCollider(Tower _tower)
     {
-        // Line
-        currentLine = Instantiate(linePrefab, transform);
-        currentLine.transform.position = Vector3.zero;
-        currentLine.SetSenderTower(this);
-        AddReceiverLine(currentLine);
-        currentLine.SetReceiverTower(_tower);
-        _tower.AddSenderLine(currentLine);
+        currentAttackCollider = Instantiate(attackColliderPrefab, transform);
+        currentAttackCollider.transform.position = Vector3.zero;
+        currentAttackCollider.SetSenderTower(this);
+        AddReceiverAttackCollider(currentAttackCollider);
+        currentAttackCollider.SetReceiverTower(_tower);
+        _tower.AddSenderAttackCollider(currentAttackCollider);
         receiverTowers.Add(_tower);
     }
 
@@ -153,11 +263,11 @@ public class Tower : MonoBehaviour
         if (receiverTowers.Contains(_tower))
         {
             receiverTowers.Remove(_tower);
-            for (int i = 0; i < receiverLines.Count; i++)
+            for (int i = 0; i < receiverAttackColliders.Count; i++)
             {
-                if (receiverLines[i].GetReceiverTower() == _tower)
+                if (receiverAttackColliders[i].GetReceiverTower() == _tower)
                 {
-                    RemoveReceiverLine(receiverLines[i]);
+                    RemoveReceiverAttackCollider(receiverAttackColliders[i]);
                 }
             }
         }
@@ -168,44 +278,57 @@ public class Tower : MonoBehaviour
         if (!senderTowers.Contains(_tower))
         {
             senderTowers.Add(_tower);
-            if (receiverTowers.Contains(_tower))
+
+            if (isAllied && _tower.isAllied)
             {
-                RemoveReceiverTower(_tower);
-            }
-        }
-    }
-    public void RemoveSenderTower(Tower _tower)
-    {
-        if (senderTowers.Contains(_tower))
-        {
-            senderTowers.Remove(_tower);
-            for (int i = 0; i < senderLines.Count; i++)
-            {
-                if (senderLines[i].GetSenderTower() == _tower)
+                if (receiverTowers.Contains(_tower))
                 {
-                    RemoveSenderLine(senderLines[i]);
+                    RemoveReceiverTower(_tower);
+                }
+            }
+
+            else if (isOpposite && _tower.isOpposite)
+            {
+                if (receiverTowers.Contains(_tower))
+                {
+                    RemoveReceiverTower(_tower);
                 }
             }
         }
     }
 
-    // Line hareketleri
-    public void AddReceiverLine(Line _line)
+    public void RemoveSenderTower(Tower _tower)
     {
-        receiverLines.Add(_line);
+        if (senderTowers.Contains(_tower))
+        {
+            senderTowers.Remove(_tower);
+            for (int i = 0; i < senderAttackColliders.Count; i++)
+            {
+                if (senderAttackColliders[i].GetSenderTower() == _tower)
+                {
+                    RemoveSenderAttackCollider(senderAttackColliders[i]);
+                }
+            }
+        }
     }
-    public void RemoveReceiverLine(Line _line)
+
+    // Attack Collider hareketleri
+    public void AddReceiverAttackCollider(AttackCollider _attackCollider)
     {
-        receiverLines.Remove(_line);
-        Destroy(_line.gameObject);
+        receiverAttackColliders.Add(_attackCollider);
     }
-    public void AddSenderLine(Line _line)
+    public void RemoveReceiverAttackCollider(AttackCollider _attackCollider)
     {
-        senderLines.Add(_line);
+        receiverAttackColliders.Remove(_attackCollider);
+        Destroy(_attackCollider.gameObject);
     }
-    public void RemoveSenderLine(Line _line)
+    public void AddSenderAttackCollider(AttackCollider _attackCollider)
     {
-        senderLines.Remove(_line);
+        senderAttackColliders.Add(_attackCollider);
+    }
+    public void RemoveSenderAttackCollider(AttackCollider _attackCollider)
+    {
+        senderAttackColliders.Remove(_attackCollider);
     }
     #endregion
 
@@ -213,70 +336,126 @@ public class Tower : MonoBehaviour
     public void IncreaseHealth()
     {
         health++;
-        healthText.text = health.ToString();
 
-        if (isAllied)
+        if (isAllied && canChange)
         {
-            meshRenderer.material = alliedMaterial;
+            canChange = false;
+            receiverTowers.Clear();
+
+            for (int i = 0; i < receiverAttackColliders.Count; i++)
+            {
+                Destroy(receiverAttackColliders[i].gameObject);
+            }
+
+            receiverAttackColliders.Clear();
         }
-        else if (isOpposite)
+        else if (isOpposite && canChange)
         {
-            meshRenderer.material = oppositeMaterial;
+            canChange = false;
+            receiverTowers.Clear();
+
+            for (int i = 0; i < receiverAttackColliders.Count; i++)
+            {
+                Destroy(receiverAttackColliders[i].gameObject);
+            }
+
+            receiverAttackColliders.Clear();
+            StartCoroutine(OppositeAttackRoutine());
         }
     }
+
     public void DecreaseHealth()
     {
         health--;
-        healthText.text = health.ToString();
 
         if (health <= 0)
         {
             meshRenderer.material = neutralMaterial;
             isAllied = false;
             isOpposite = false;
+            canChange = true;
         }
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("Allied"))
+        if (other.gameObject.CompareTag("Soldier"))
         {
-            if (other.GetComponent<Soldier>().senderTower != this)
+            if (other.GetComponent<Soldier>().isAllied)
             {
-                Destroy(other.gameObject);
-                if (isOpposite)
+                if (other.GetComponent<Soldier>().senderTower != this)
                 {
-                    DecreaseHealth();
-                }
-                else
-                {
-                    if (health <= 0)
+                    Destroy(other.gameObject);
+                    if (isOpposite)
                     {
-                        isAllied = true;
+                        DecreaseHealth();
+                        if (health < 0)
+                        {
+                            ChangeTower(true, alliedMaterial, alliedChangeParticle);
+                            TowerManager.towerManager.AddAlliedTower(this);
+                        }
                     }
-                    IncreaseHealth();
+                    else if (isAllied)
+                    {
+                        IncreaseHealth();
+                    }
+                    else
+                    {
+                        DecreaseHealth();
+                        if (health < 0)
+                        {
+                            ChangeTower(true, alliedMaterial, alliedChangeParticle);
+                            TowerManager.towerManager.AddAlliedTower(this);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (other.GetComponent<Soldier>().senderTower != this)
+                {
+                    Destroy(other.gameObject);
+                    if (isAllied)
+                    {
+                        DecreaseHealth();
+                        if (health < 0)
+                        {
+                            ChangeTower(false, oppositeMaterial, oppositeChangeParticle);
+                            TowerManager.towerManager.AddOppositeTower(this);
+                        }
+                    }
+                    else if (isOpposite)
+                    {
+                        IncreaseHealth();
+                    }
+                    else
+                    {
+                        DecreaseHealth();
+                        if (health < 0)
+                        {
+                            ChangeTower(false, oppositeMaterial, oppositeChangeParticle);
+                            TowerManager.towerManager.AddOppositeTower(this);
+                        }
+                    }
                 }
             }
         }
+    }
 
-        if (other.gameObject.CompareTag("Opposite"))
+    private void ChangeTower(bool _allied, Material _material, GameObject _effect)
+    {
+        if (_allied)
         {
-            if (other.GetComponent<Soldier>().senderTower != this)
-            {
-                Destroy(other.gameObject);
-                if (isAllied)
-                {
-                    DecreaseHealth();
-                }
-                else
-                {
-                    if (health <= 0)
-                    {
-                        isOpposite = true;
-                    }
-                    IncreaseHealth();
-                }
-            }
+            audioSource.PlayOneShot(alliedClip);
         }
+        else if (!_allied)
+        {
+            audioSource.PlayOneShot(oppositeClip);
+        }
+        isOpposite = !_allied;
+        isAllied = _allied;
+        health = 1;
+        meshRenderer.material = _material;
+        Destroy(Instantiate(_effect, transform.position, Quaternion.identity), 1.5f);
     }
 }

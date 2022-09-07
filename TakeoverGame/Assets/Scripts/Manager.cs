@@ -2,21 +2,19 @@ using System.Collections;
 using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class Manager : MonoBehaviour
 {
     [Header("Level")]
     [SerializeField]
     private TextMeshProUGUI levelText;
-    public int levelNumber = 1;
+    [SerializeField]
+    private int levelNumber = 1;
 
     [Header("Progress")]
     [SerializeField]
     private Bar progressBar;
-
-    public int totalTowerCount = 0;
-    public int alliedTowerCount = 0;
-    public int oppositeTowerCount = 0;
 
     [Header("Start-End Game")]
     [SerializeField]
@@ -42,9 +40,9 @@ public class Manager : MonoBehaviour
 
     private bool firstMove;
 
-    public bool isLevelCompleted;
-    public bool isLevelFailed;
-    public bool isLevelFinished;
+    private bool isLevelCompleted;
+    private bool isLevelFailed;
+    private bool isLevelFinished;
 
     public static Manager manager;
     private void Awake()
@@ -53,15 +51,14 @@ public class Manager : MonoBehaviour
         {
             manager = this;
         }
-        levelText.text = "LEVEL - " + levelNumber.ToString();
-    }
 
-    private void Start()
-    {
+        levelText.text = "LEVEL - " + levelNumber.ToString();
     }
 
     private void Update()
     {
+        progressBar.SetCurrentValue(TowerManager.towerManager.GetAlliedTowerCount());
+
         if (!isFirstTouch && firstMove)
         {
             if (!isLevelFinished)
@@ -72,14 +69,14 @@ public class Manager : MonoBehaviour
         }
     }
 
-    public void FinishLevel()
+    public void FinishLevel(bool _levelCompleted)
     {
-        StartCoroutine(FinishLevelCoroutine());
+        StartCoroutine(FinishLevelCoroutine(_levelCompleted));
     }
 
-    public IEnumerator FinishLevelCoroutine()
+    public IEnumerator FinishLevelCoroutine(bool _levelCompleted)
     {
-        Debug.Log("LEVEL FINISHED !");
+        // Debug.Log("LEVEL FINISHED !");
 
         if (!isLevelFinished)
         {
@@ -88,9 +85,9 @@ public class Manager : MonoBehaviour
             levelEndUI.SetActive(true);
         }
 
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(0.25f);
 
-        if (totalTowerCount == alliedTowerCount)
+        if (_levelCompleted)
         {
             LevelCompleted();
         }
@@ -106,14 +103,14 @@ public class Manager : MonoBehaviour
     {
         levelCompletedText.SetActive(true);
         nextButton.SetActive(true);
-        Debug.Log("Level Completed !");
+        // Debug.Log("Level Completed !");
     }
 
     public void LevelFailed()
     {
         levelFailedText.SetActive(true);
         restartButton.SetActive(true);
-        Debug.Log("Level Failed !");
+        // Debug.Log("Level Failed !");
     }
 
     public void StartLevel()
@@ -123,33 +120,11 @@ public class Manager : MonoBehaviour
 
     public IEnumerator StartLevelRoutine()
     {
+        progressBar.SetMaxValue(TowerManager.towerManager.GetTowerCount());
+        progressBar.SetCurrentValue(TowerManager.towerManager.GetAlliedTowerCount());
         yield return new WaitForSeconds(0.25f);
         firstMove = true;
         levelUI.SetActive(true);
-    }
-
-    public void IncreaseAlliedTowerCount()
-    {
-        Debug.Log("Increase Allied Tower Count");
-        alliedTowerCount++;
-    }
-
-    public void DecreaseAlliedTowerCount()
-    {
-        Debug.Log("Increase Allied Tower Count");
-        alliedTowerCount--;
-    }
-
-    public void IncreaseOppositeTowerCount()
-    {
-        Debug.Log("Increase Allied Tower Count");
-        oppositeTowerCount++;
-    }
-
-    public void DecreaseOppositeTowerCount()
-    {
-        Debug.Log("Increase Allied Tower Count");
-        oppositeTowerCount--;
     }
 
     public void RestartLevel()
