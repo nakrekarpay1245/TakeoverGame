@@ -781,7 +781,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1670996376491153041, guid: 9062b275b241eb84f8f92d62999a8330, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 15
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 1670996376491153041, guid: 9062b275b241eb84f8f92d62999a8330, type: 3}
       propertyPath: m_LocalPosition.z
@@ -828,6 +828,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1873678786831561474, guid: 6ba58a1d188d6534a85696b6438db9ec, type: 3}
+      propertyPath: sendSoldierTime
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1873678786831561475, guid: 6ba58a1d188d6534a85696b6438db9ec, type: 3}
       propertyPath: m_Name
       value: AlliedTower
@@ -1004,7 +1008,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5888871767947991831, guid: 3a6320c22625f2e46802f463b228d51a, type: 3}
       propertyPath: m_Color.b
-      value: 0.29411766
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5888871767947991831, guid: 3a6320c22625f2e46802f463b228d51a, type: 3}
       propertyPath: m_Color.g
@@ -1012,7 +1016,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5888871767947991831, guid: 3a6320c22625f2e46802f463b228d51a, type: 3}
       propertyPath: m_Color.r
-      value: 0.49019608
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6013802214853296479, guid: 3a6320c22625f2e46802f463b228d51a, type: 3}
       propertyPath: m_IsActive

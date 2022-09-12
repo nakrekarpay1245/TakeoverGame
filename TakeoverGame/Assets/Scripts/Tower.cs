@@ -195,22 +195,26 @@ public class Tower : MonoBehaviour
         }
     }
 
-    public void GenerateAlliedSoldier(Vector3 towerPosition)
+    public void GenerateAlliedSoldier(Vector3 _towerPosition)
     {
+        Vector3 _position = new Vector3(transform.position.x, 0.25f, transform.position.z);
         Soldier currentSoldier = Instantiate(alliedSoldierPrefab,
-            transform.position, Quaternion.identity);
+            _position, Quaternion.identity);
 
         currentSoldier.senderTower = this;
+        Vector3 towerPosition = new Vector3(_towerPosition.x, 0.25f, _towerPosition.z);
         currentSoldier.MovePosition(towerPosition);
         audioSource.PlayOneShot(sendSoldierClip);
     }
 
-    public void GenerateOppositeSoldier(Vector3 towerPosition)
+    public void GenerateOppositeSoldier(Vector3 _towerPosition)
     {
+        Vector3 _position = new Vector3(transform.position.x, 0.25f, transform.position.z);
         Soldier currentSoldier = Instantiate(oppositeSoldierPrefab,
             transform.position, Quaternion.identity);
 
         currentSoldier.senderTower = this;
+        Vector3 towerPosition = new Vector3(_towerPosition.x, 0.25f, _towerPosition.z);
         currentSoldier.MovePosition(towerPosition);
         audioSource.PlayOneShot(audioSource.clip);
     }
@@ -337,29 +341,9 @@ public class Tower : MonoBehaviour
     {
         health++;
 
-        if (isAllied && canChange)
+        if (isOpposite && canChange)
         {
             canChange = false;
-            receiverTowers.Clear();
-
-            for (int i = 0; i < receiverAttackColliders.Count; i++)
-            {
-                Destroy(receiverAttackColliders[i].gameObject);
-            }
-
-            receiverAttackColliders.Clear();
-        }
-        else if (isOpposite && canChange)
-        {
-            canChange = false;
-            receiverTowers.Clear();
-
-            for (int i = 0; i < receiverAttackColliders.Count; i++)
-            {
-                Destroy(receiverAttackColliders[i].gameObject);
-            }
-
-            receiverAttackColliders.Clear();
             StartCoroutine(OppositeAttackRoutine());
         }
     }
@@ -370,7 +354,7 @@ public class Tower : MonoBehaviour
 
         if (health <= 0)
         {
-            meshRenderer.material = neutralMaterial;
+            meshRenderer.materials[3].color = neutralMaterial.color;
             isAllied = false;
             isOpposite = false;
             canChange = true;
@@ -452,10 +436,18 @@ public class Tower : MonoBehaviour
         {
             audioSource.PlayOneShot(oppositeClip);
         }
+
+        receiverTowers.Clear();
+        for (int i = 0; i < receiverAttackColliders.Count; i++)
+        {
+            Destroy(receiverAttackColliders[i].gameObject);
+        }
+        receiverAttackColliders.Clear();
+
         isOpposite = !_allied;
         isAllied = _allied;
         health = 1;
-        meshRenderer.material = _material;
+        meshRenderer.materials[3].color = _material.color;
         Destroy(Instantiate(_effect, transform.position, Quaternion.identity), 1.5f);
     }
 }

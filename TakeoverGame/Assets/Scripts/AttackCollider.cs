@@ -24,7 +24,7 @@ public class AttackCollider : MonoBehaviour
         if (senderTower.isAllied)
         {
             // Change image color
-            senderParticle.startColor = Color.green;
+            senderParticle.startColor = Color.yellow;
         }
         else if (senderTower.isOpposite)
         {

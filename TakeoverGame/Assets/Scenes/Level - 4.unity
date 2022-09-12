@@ -169,7 +169,7 @@ PrefabInstance:
     - target: {fileID: 2846721156866244780, guid: 6c6d7c2e77f67d441a544d25af6988d9, type: 3}
       propertyPath: alliedSoldierPrefab
       value: 
-      objectReference: {fileID: 887056393572689020, guid: 6462a60844c3ebc4d98211ea9c3d72ca, type: 3}
+      objectReference: {fileID: 887056393572689020, guid: bb128100839eea040b98ed82e2a86bad, type: 3}
     - target: {fileID: 2846721156866244780, guid: 6c6d7c2e77f67d441a544d25af6988d9, type: 3}
       propertyPath: alliedChangeParticle
       value: 
@@ -181,7 +181,7 @@ PrefabInstance:
     - target: {fileID: 2846721156866244780, guid: 6c6d7c2e77f67d441a544d25af6988d9, type: 3}
       propertyPath: oppositeSoldierPrefab
       value: 
-      objectReference: {fileID: 887056393572689020, guid: 79fa32a5a9f0499439f93d945ba157f0, type: 3}
+      objectReference: {fileID: 887056393572689020, guid: c91d64a7fcf81db4b8595b786ab8f40c, type: 3}
     - target: {fileID: 2846721156866244780, guid: 6c6d7c2e77f67d441a544d25af6988d9, type: 3}
       propertyPath: oppositeChangeParticle
       value: 
@@ -963,12 +963,16 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1873678786831561474, guid: 6ba58a1d188d6534a85696b6438db9ec, type: 3}
       propertyPath: health
-      value: 50
+      value: 75
       objectReference: {fileID: 0}
     - target: {fileID: 1873678786831561474, guid: 6ba58a1d188d6534a85696b6438db9ec, type: 3}
       propertyPath: oppositeClip
       value: 
       objectReference: {fileID: 8300000, guid: 047edbb692b1e0b4597537ae632e3591, type: 3}
+    - target: {fileID: 1873678786831561474, guid: 6ba58a1d188d6534a85696b6438db9ec, type: 3}
+      propertyPath: sendSoldierTime
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1873678786831561475, guid: 6ba58a1d188d6534a85696b6438db9ec, type: 3}
       propertyPath: m_Name
       value: AlliedTower
@@ -1145,7 +1149,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5888871767947991831, guid: 3a6320c22625f2e46802f463b228d51a, type: 3}
       propertyPath: m_Color.b
-      value: 0.29411766
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5888871767947991831, guid: 3a6320c22625f2e46802f463b228d51a, type: 3}
       propertyPath: m_Color.g
@@ -1153,7 +1157,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5888871767947991831, guid: 3a6320c22625f2e46802f463b228d51a, type: 3}
       propertyPath: m_Color.r
-      value: 0.49019608
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6013802214853296479, guid: 3a6320c22625f2e46802f463b228d51a, type: 3}
       propertyPath: m_IsActive

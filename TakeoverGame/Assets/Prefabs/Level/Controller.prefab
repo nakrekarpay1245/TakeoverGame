@@ -16,7 +16,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4377779070224634794
 Transform:
   m_ObjectHideFlags: 0
@@ -74,7 +74,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 0ceeb041a3c0c8c49a6d6ad7389c8453, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -225,7 +225,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6781850890563570077, guid: d32b218bc2615ae4cbeb64d692114aad, type: 3}
       propertyPath: m_Parameters.colorGradient.key0.r
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6781850890563570077, guid: d32b218bc2615ae4cbeb64d692114aad, type: 3}
       propertyPath: m_Parameters.colorGradient.key1.a
@@ -233,11 +233,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6781850890563570077, guid: d32b218bc2615ae4cbeb64d692114aad, type: 3}
       propertyPath: m_Parameters.colorGradient.key1.g
-      value: 1
+      value: 0.49019608
       objectReference: {fileID: 0}
     - target: {fileID: 6781850890563570077, guid: d32b218bc2615ae4cbeb64d692114aad, type: 3}
       propertyPath: m_Parameters.colorGradient.key1.r
-      value: 0.49019608
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6781850890563570077, guid: d32b218bc2615ae4cbeb64d692114aad, type: 3}
       propertyPath: m_Parameters.colorGradient.key2.a
@@ -253,7 +253,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7829139653612699380, guid: d32b218bc2615ae4cbeb64d692114aad, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d32b218bc2615ae4cbeb64d692114aad, type: 3}
