@@ -646,6 +646,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1066504598, guid: 6ba58a1d188d6534a85696b6438db9ec, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1873678786831561474, guid: 6ba58a1d188d6534a85696b6438db9ec, type: 3}
       propertyPath: sendSoldierTime
       value: 1

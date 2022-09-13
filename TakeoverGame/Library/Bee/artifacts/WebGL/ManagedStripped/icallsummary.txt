@@ -454,6 +454,7 @@ UnityEngine.Renderer::set_sortingLayerID
 UnityEngine.Renderer::set_sortingOrder
 UnityEngine.Renderer::GetMaterial
 UnityEngine.Renderer::GetSharedMaterial
+UnityEngine.Renderer::GetMaterialArray
 UnityEngine.Rendering.GraphicsSettings::get_lightsUseLinearIntensity
 UnityEngine.Rendering.ScriptableRenderContext::GetCameras_Internal_Injected
 UnityEngine.RenderTexture::get_height
